@@ -7,36 +7,47 @@
 
 import SwiftUI
 import CoreData
-
+import Firebase
 struct ContentView: View {
+    @State var isShown = false
+    var title : String? = "SomeTitle"
     @Environment(\.managedObjectContext) private var viewContext
-
     @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Item.timestamp, ascending: true)],
         animation: .default) private var items: FetchedResults<Item>
 
     var body: some View {
         NavigationStack {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        
-                    } label: {
-
-                        
-                        
-                    }
-                }
-                
+//            List {
+//                ForEach(items) { item in
+//                    NavigationLink {
+//                    } label: {
+//                    }
+//                }
+//            }
+            
+            Button("Crash") {
+              fatalError("Crash was triggered")
             }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    
-                }
-                ToolbarItem {
-                 
-                }
+            
+            Button("SomeButton"){
+                Analytics.logEvent(AnalyticsEventSelectContent, parameters: [
+                  AnalyticsParameterItemID: "id-\(title!)",
+                  AnalyticsParameterItemName: title!,
+                  AnalyticsParameterContentType: "cont",
+                ])
             }
-            .navigationTitle("Todo")
+            
+//            .toolbar {
+//                ToolbarItem(placement: .navigationBarTrailing) {
+//                    Button("Add") {
+//                        isShown = true
+//                    }
+//                }
+//            }
+            .navigationTitle("Notes")
+            .sheet(isPresented: $isShown) {
+                CreateNote()
+            }
         }
     }
 }
